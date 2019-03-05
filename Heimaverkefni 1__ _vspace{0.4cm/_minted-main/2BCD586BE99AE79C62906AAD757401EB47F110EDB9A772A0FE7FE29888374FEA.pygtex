@@ -1,0 +1,47 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{function}\PYG{+w}{ }[y,g,A,h] \PYG{p}{=}\PYG{+w}{ }\PYG{n+nf}{LimpBridge}\PYG{p}{(}n, p\PYG{p}{)}
+\PYG{c}{\PYGZpc{} LimpBridge reiknar frávik brúar frá jafnvægisstöðu undir álagi frá hrúgu}
+\PYG{c}{\PYGZpc{} með þyngd p.}
+\PYG{c}{\PYGZpc{}   LimpBridge tekur inn fjölda bila n og þyngd hrúgu p.}
+\PYG{c}{\PYGZpc{}   LimpBridge skilar reiknuðu fráviki y, nákvæmu fráviki g, fylkinu A og}
+\PYG{c}{\PYGZpc{}   lengd bila h.}
+\PYG{c}{\PYGZpc{}See also LIMPSTICK, LIMPSTICK8.}
+
+    \PYG{c}{\PYGZpc{}\PYGZpc{} Skilgreinum fasta}
+    \PYG{n}{L} \PYG{p}{=} \PYG{l+m+mi}{2}\PYG{p}{;}
+    \PYG{n}{h} \PYG{p}{=} \PYG{n}{L}\PYG{o}{/}\PYG{p}{(}\PYG{n}{n} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{p}{);}
+    \PYG{n}{E} \PYG{p}{=} \PYG{l+m+mf}{1.3e10}\PYG{p}{;}
+    \PYG{n}{w} \PYG{p}{=} \PYG{l+m+mf}{0.3}\PYG{p}{;}
+    \PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.03}\PYG{p}{;}
+    \PYG{n}{I} \PYG{p}{=} \PYG{n}{w}\PYG{o}{*}\PYG{n}{d}\PYGZca{}\PYG{l+m+mi}{3}\PYG{o}{/}\PYG{l+m+mi}{12}\PYG{p}{;}
+    \PYG{n}{g} \PYG{p}{=} \PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{9.81}\PYG{p}{;}
+    \PYG{n}{CTE} \PYG{p}{=} \PYG{n}{h}\PYGZca{}\PYG{l+m+mi}{4}\PYG{o}{/}\PYG{p}{(}\PYG{n}{E}\PYG{o}{*}\PYG{n}{I}\PYG{p}{);}
+    \PYG{c}{\PYGZpc{}\PYGZpc{} Skilgreinum fylkið A}
+    \PYG{n}{A} \PYG{p}{=} \PYG{n+nb}{zeros}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,}\PYG{n}{n}\PYG{p}{);}
+    \PYG{n}{A}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,:)} \PYG{p}{=} \PYG{p}{[}\PYG{l+m+mi}{16}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{9}\PYG{p}{,} \PYG{l+m+mi}{8}\PYG{o}{/}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{o}{/}\PYG{l+m+mi}{4}\PYG{p}{,} \PYG{n+nb}{zeros}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{n}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{4}\PYG{p}{)];}
+    \PYG{n}{A}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,:)} \PYG{p}{=} \PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{4}\PYG{p}{,} \PYG{l+m+mi}{6}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{4}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n+nb}{zeros}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{n}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{4}\PYG{p}{)];}
+    \PYG{n+nb}{j} \PYG{p}{=} \PYG{l+m+mi}{0}\PYG{p}{;}
+    \PYG{k}{for} \PYG{n+nb}{i} \PYG{p}{=} \PYG{l+m+mi}{3}\PYG{p}{:}\PYG{n}{n}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{2}
+        \PYG{n}{A}\PYG{p}{(}\PYG{n+nb}{i}\PYG{p}{,:)} \PYG{p}{=} \PYG{p}{[}\PYG{n+nb}{zeros}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{n+nb}{j}\PYG{p}{),} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{4}\PYG{p}{,} \PYG{l+m+mi}{6}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{4}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n+nb}{zeros}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{n} \PYG{o}{\PYGZhy{}} \PYG{p}{(}\PYG{l+m+mi}{5} \PYG{o}{+} \PYG{n+nb}{j}\PYG{p}{))];}
+        \PYG{n+nb}{j} \PYG{p}{=} \PYG{n+nb}{j} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{p}{;}
+    \PYG{k}{end}
+    \PYG{n}{A}\PYG{p}{(}\PYG{n}{n}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,:)} \PYG{p}{=} \PYG{n+nb}{fliplr}\PYG{p}{(}\PYG{n}{A}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,:));}
+    \PYG{n}{A}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,:)} \PYG{p}{=} \PYG{n+nb}{fliplr}\PYG{p}{(}\PYG{n}{A}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,:));}
+    \PYG{n}{A} \PYG{p}{=} \PYG{n}{sparse}\PYG{p}{(}\PYG{n}{A}\PYG{p}{);}
+    \PYG{c}{\PYGZpc{}\PYGZpc{} Skilgreinum vigurinn f}
+    \PYG{n}{f} \PYG{p}{=} \PYG{n+nb}{zeros}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,}\PYG{l+m+mi}{1}\PYG{p}{);}
+    \PYG{k}{for} \PYG{n+nb}{i} \PYG{p}{=} \PYG{l+m+mi}{1}\PYG{p}{:}\PYG{n}{n}
+        \PYG{n}{f}\PYG{p}{(}\PYG{n+nb}{i}\PYG{p}{)} \PYG{p}{=} \PYG{l+m+mi}{480}\PYG{o}{*}\PYG{n}{w}\PYG{o}{*}\PYG{n}{d}\PYG{o}{*}\PYG{n}{g} \PYG{o}{+} \PYG{n}{p}\PYG{o}{*}\PYG{n}{g}\PYG{o}{*}\PYG{n+nb}{sin}\PYG{p}{(}\PYG{n}{h}\PYG{o}{*}\PYG{n+nb}{i}\PYG{o}{*}\PYG{n+nb}{pi}\PYG{o}{/}\PYG{n}{L}\PYG{p}{);}
+    \PYG{k}{end}
+    \PYG{c}{\PYGZpc{}\PYGZpc{} Reiknum lausn}
+    \PYG{n}{y} \PYG{p}{=} \PYG{n}{A}\PYG{o}{\PYGZbs{}}\PYG{p}{(}\PYG{n}{f}\PYG{o}{*}\PYG{n}{CTE}\PYG{p}{);}
+    \PYG{c}{\PYGZpc{}\PYGZpc{} Skilgreinum nákvæma lausn}
+    \PYG{n}{p} \PYG{p}{=} \PYG{p}{@(}\PYG{n}{x}\PYG{p}{)} \PYG{p}{((}\PYG{l+m+mi}{480}\PYG{o}{*}\PYG{n}{w}\PYG{o}{*}\PYG{n}{d}\PYG{o}{*}\PYG{n}{g}\PYG{p}{)}\PYG{o}{/}\PYG{p}{(}\PYG{l+m+mi}{24}\PYG{o}{*}\PYG{n}{E}\PYG{o}{*}\PYG{n}{I}\PYG{p}{))}\PYG{o}{*}\PYG{n}{x}\PYGZca{}\PYG{l+m+mi}{2}\PYG{o}{*}\PYG{p}{(}\PYG{n}{L}\PYG{o}{\PYGZhy{}}\PYG{n}{x}\PYG{p}{)}\PYGZca{}\PYG{l+m+mi}{2} \PYG{o}{+} \PYG{p}{(}\PYG{n}{p}\PYG{o}{*}\PYG{n}{g}\PYG{o}{*}\PYG{n}{L}\PYGZca{}\PYG{l+m+mi}{2}\PYG{o}{/}\PYG{p}{(}\PYG{n+nb}{pi}\PYGZca{}\PYG{l+m+mi}{4}\PYG{o}{*}\PYG{n}{E}\PYG{o}{*}\PYG{n}{I}\PYG{p}{))}\PYG{o}{*}\PYG{p}{(}\PYG{n}{L}\PYGZca{}\PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n+nb}{sin}\PYG{p}{(}\PYG{n+nb}{pi}\PYG{o}{*}\PYG{n}{x}\PYG{o}{/}\PYG{n}{L}\PYG{p}{)}
+    \PYG{o}{+} \PYG{n+nb}{pi}\PYG{o}{*}\PYG{n}{x}\PYG{o}{*}\PYG{p}{(}\PYG{n}{x} \PYG{o}{\PYGZhy{}} \PYG{n}{L}\PYG{p}{));}
+    \PYG{n}{g} \PYG{p}{=} \PYG{n+nb}{zeros}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{n}{n}\PYG{p}{);}
+    \PYG{k}{for} \PYG{n+nb}{i} \PYG{p}{=} \PYG{l+m+mi}{1}\PYG{p}{:}\PYG{n}{n}
+        \PYG{n+nb}{j} \PYG{p}{=} \PYG{n}{h}\PYG{o}{*}\PYG{n+nb}{i}\PYG{p}{;}
+        \PYG{n}{g}\PYG{p}{(}\PYG{n+nb}{i}\PYG{p}{)} \PYG{p}{=} \PYG{n}{p}\PYG{p}{(}\PYG{n+nb}{j}\PYG{p}{);}
+    \PYG{k}{end}
+\PYG{k}{end}
+\end{Verbatim}

@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c}{\PYGZpc{}\PYGZpc{} Köllum á fallið til að fá reiknaða lausn y og rétta lausn g}
+    \PYG{n}{clear}
+    \PYG{n}{n} \PYG{p}{=} \PYG{l+m+mi}{10}\PYG{p}{;}
+    \PYG{p}{[}\PYG{n}{y}\PYG{p}{,} \PYG{n}{g}\PYG{p}{,}\PYG{o}{\PYGZti{}}\PYG{p}{,}\PYG{n}{h}\PYG{p}{]} \PYG{p}{=} \PYG{n}{LimpStick}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{false}\PYG{p}{);}
+\end{Verbatim}

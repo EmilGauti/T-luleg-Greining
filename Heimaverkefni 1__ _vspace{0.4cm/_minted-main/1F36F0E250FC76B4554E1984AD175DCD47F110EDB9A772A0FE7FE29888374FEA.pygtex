@@ -1,0 +1,21 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c}{\PYGZpc{}\PYGZpc{} Festum planka í báða enda}
+    \PYG{n}{clf}
+    \PYG{n}{clear}
+    \PYG{n}{hold} \PYG{n}{on}
+    \PYG{n}{err3} \PYG{p}{=} \PYG{n+nb}{zeros}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{11}\PYG{p}{);}
+    \PYG{n}{hft2} \PYG{p}{=} \PYG{n+nb}{zeros}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{11}\PYG{p}{);}
+    \PYG{n}{cond3} \PYG{p}{=} \PYG{n+nb}{zeros}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{11}\PYG{p}{);}
+    \PYG{p}{[}\PYG{o}{\PYGZti{}}\PYG{p}{,}\PYG{n}{g}\PYG{p}{,}\PYG{o}{\PYGZti{}}\PYG{p}{,}\PYG{n}{h}\PYG{p}{]} \PYG{p}{=} \PYG{n}{LimpBridge}\PYG{p}{(}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{l+m+mi}{100}\PYG{p}{);}
+    \PYG{n}{plot}\PYG{p}{([}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{h}\PYG{o}{.*}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{:}\PYG{l+m+mi}{10}\PYG{p}{)],} \PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{n}{g}\PYG{p}{])}
+    \PYG{k}{for} \PYG{n}{k} \PYG{p}{=} \PYG{l+m+mi}{1}\PYG{p}{:}\PYG{l+m+mi}{11}
+        \PYG{n}{n} \PYG{p}{=} \PYG{l+m+mi}{10}\PYG{o}{*}\PYG{l+m+mi}{2}\PYGZca{}\PYG{n}{k}\PYG{p}{;}
+        \PYG{p}{[}\PYG{n}{y}\PYG{p}{,}\PYG{n}{g}\PYG{p}{,}\PYG{n}{A}\PYG{p}{,}\PYG{n}{h}\PYG{p}{]} \PYG{p}{=} \PYG{n}{LimpBridge}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,} \PYG{l+m+mi}{100}\PYG{p}{);}
+        \PYG{n}{plot}\PYG{p}{([}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{n}{h}\PYG{o}{.*}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{:}\PYG{n}{n}\PYG{p}{)],} \PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{n}{y}\PYG{p}{])}
+        \PYG{n}{err3}\PYG{p}{(}\PYG{n}{k}\PYG{p}{)} \PYG{p}{=} \PYG{n+nb}{abs}\PYG{p}{(}\PYG{n}{y}\PYG{p}{(}\PYG{n+nb}{round}\PYG{p}{(}\PYG{n}{n}\PYG{o}{/}\PYG{l+m+mi}{2}\PYG{p}{))} \PYG{o}{\PYGZhy{}} \PYG{n}{g}\PYG{p}{(}\PYG{n+nb}{round}\PYG{p}{(}\PYG{n}{n}\PYG{o}{/}\PYG{l+m+mi}{2}\PYG{p}{)));}
+        \PYG{n}{cond3}\PYG{p}{(}\PYG{n}{k}\PYG{p}{)} \PYG{p}{=} \PYG{n}{condest}\PYG{p}{(}\PYG{n}{A}\PYG{p}{);}
+        \PYG{n}{hft2}\PYG{p}{(}\PYG{n}{k}\PYG{p}{)} \PYG{p}{=} \PYG{n}{h}\PYG{p}{;}
+    \PYG{k}{end}
+    \PYG{n}{axis}\PYG{p}{([}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{0.02}\PYG{p}{,} \PYG{l+m+mf}{0.02}\PYG{p}{])}
+    \PYG{n}{hold} \PYG{n}{off}
+\end{Verbatim}

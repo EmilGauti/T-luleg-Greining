@@ -1,0 +1,11 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c}{\PYGZpc{}\PYGZpc{} Eins og fyrri liðurinn, nema með dýfingarmanni}
+    \PYG{n}{clear}
+    \PYG{n}{clf}
+    \PYG{n}{n} \PYG{p}{=} \PYG{l+m+mi}{10}\PYG{o}{*}\PYG{l+m+mi}{2}\PYGZca{}\PYG{l+m+mi}{7}\PYG{p}{;}
+    \PYG{p}{[}\PYG{n}{y}\PYG{p}{,}\PYG{o}{\PYGZti{}}\PYG{p}{,}\PYG{o}{\PYGZti{}}\PYG{p}{,}\PYG{n}{h}\PYG{p}{]} \PYG{p}{=} \PYG{n}{LimpStick}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{true}\PYG{p}{);}
+    \PYG{n}{plot}\PYG{p}{([}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{h}\PYG{o}{*}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{:}\PYG{n}{n}\PYG{p}{)],} \PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{;} \PYG{n}{y}\PYG{p}{])}
+    \PYG{n}{def} \PYG{p}{=} \PYG{n}{y}\PYG{p}{(}\PYG{n}{n}\PYG{p}{);}
+    \PYG{n}{ylabel}\PYG{p}{(}\PYGZdq{}\PYG{n}{Frávik} \PYG{p}{[}\PYG{n}{m}\PYG{p}{]}\PYGZdq{}\PYG{p}{)}
+    \PYG{n}{xlabel}\PYG{p}{(}\PYGZdq{}\PYG{n}{Lengd} \PYG{p}{[}\PYG{n}{m}\PYG{p}{]}\PYGZdq{}\PYG{p}{)}
+\end{Verbatim}

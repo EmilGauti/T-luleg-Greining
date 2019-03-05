@@ -1,0 +1,72 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{n} \PYG{p}{=} \PYG{l+m+mi}{100}\PYG{p}{;}
+\PYG{n}{w} \PYG{p}{=} \PYG{l+m+mf}{0.3}\PYG{p}{;}
+\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.03}\PYG{p}{;}
+\PYG{n}{y} \PYG{p}{=} \PYG{n+nb}{zeros}\PYG{p}{(}\PYG{l+m+mi}{6}\PYG{p}{,}\PYG{n}{n}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{n}{g} \PYG{p}{=} \PYG{n}{y}\PYG{p}{;}
+\PYG{n}{deflection} \PYG{p}{=} \PYG{n+nb}{zeros}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{);}
+
+\PYG{p}{[}\PYG{n}{y1}\PYG{p}{,} \PYG{n}{g1}\PYG{p}{,}\PYG{o}{\PYGZti{}}\PYG{p}{,}\PYG{n}{h}\PYG{p}{]} \PYG{p}{=} \PYG{n}{LimpStick8}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,} \PYG{n}{w}\PYG{p}{,} \PYG{n}{d}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{true}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}k\PYGZsq{}}\PYG{p}{,} \PYG{l+m+mf}{1.3e10}\PYG{p}{);}
+    \PYG{n}{y}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,:)} \PYG{p}{=} \PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{y1}\PYG{p}{.}\PYG{o}{\PYGZsq{}}\PYG{p}{];}
+    \PYG{n}{g}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,:)} \PYG{p}{=} \PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{g1}\PYG{p}{];}
+\PYG{p}{[}\PYG{n}{y2}\PYG{p}{,} \PYG{n}{g2}\PYG{p}{,}\PYG{o}{\PYGZti{}}\PYG{p}{,}\PYG{o}{\PYGZti{}}\PYG{p}{]} \PYG{p}{=} \PYG{n}{LimpStick8}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{w}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{d}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{true}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}k\PYGZsq{}}\PYG{p}{,} \PYG{l+m+mf}{1.3e10}\PYG{p}{);}
+    \PYG{n}{y}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,:)} \PYG{p}{=} \PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{y2}\PYG{p}{.}\PYG{o}{\PYGZsq{}}\PYG{p}{];}
+    \PYG{n}{g}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,:)} \PYG{p}{=} \PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{g2}\PYG{p}{];}
+\PYG{p}{[}\PYG{n}{y3}\PYG{p}{,} \PYG{n}{g3}\PYG{p}{,}\PYG{o}{\PYGZti{}}\PYG{p}{,}\PYG{o}{\PYGZti{}}\PYG{p}{]} \PYG{p}{=} \PYG{n}{LimpStick8}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,} \PYG{n}{w}\PYG{p}{,} \PYG{n}{d}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{true}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}h\PYGZsq{}}\PYG{p}{,} \PYG{l+m+mf}{1.3e10}\PYG{p}{);}
+    \PYG{n}{y}\PYG{p}{(}\PYG{l+m+mi}{3}\PYG{p}{,:)} \PYG{p}{=} \PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{y3}\PYG{p}{.}\PYG{o}{\PYGZsq{}}\PYG{p}{];}
+    \PYG{n}{g}\PYG{p}{(}\PYG{l+m+mi}{3}\PYG{p}{,:)} \PYG{p}{=} \PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{g3}\PYG{p}{];}
+\PYG{p}{[}\PYG{n}{y4}\PYG{p}{,} \PYG{n}{g4}\PYG{p}{,}\PYG{o}{\PYGZti{}}\PYG{p}{,}\PYG{o}{\PYGZti{}}\PYG{p}{]} \PYG{p}{=} \PYG{n}{LimpStick8}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{w}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{d}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{true}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}h\PYGZsq{}}\PYG{p}{,} \PYG{l+m+mf}{1.3e10}\PYG{p}{);}
+    \PYG{n}{y}\PYG{p}{(}\PYG{l+m+mi}{4}\PYG{p}{,:)} \PYG{p}{=} \PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{y4}\PYG{p}{.}\PYG{o}{\PYGZsq{}}\PYG{p}{];}
+    \PYG{n}{g}\PYG{p}{(}\PYG{l+m+mi}{4}\PYG{p}{,:)} \PYG{p}{=} \PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{g4}\PYG{p}{];}
+\PYG{p}{[}\PYG{n}{y5}\PYG{p}{,} \PYG{n}{g5}\PYG{p}{,}\PYG{o}{\PYGZti{}}\PYG{p}{,}\PYG{o}{\PYGZti{}}\PYG{p}{]} \PYG{p}{=} \PYG{n}{LimpStick8}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,} \PYG{n}{w}\PYG{p}{,} \PYG{n}{d}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{true}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}g\PYGZsq{}}\PYG{p}{,} \PYG{l+m+mf}{1.3e10}\PYG{p}{);}
+    \PYG{n}{y}\PYG{p}{(}\PYG{l+m+mi}{5}\PYG{p}{,:)} \PYG{p}{=} \PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{y5}\PYG{p}{.}\PYG{o}{\PYGZsq{}}\PYG{p}{];}
+    \PYG{n}{g}\PYG{p}{(}\PYG{l+m+mi}{5}\PYG{p}{,:)} \PYG{p}{=} \PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{g5}\PYG{p}{];}
+\PYG{p}{[}\PYG{n}{y6}\PYG{p}{,} \PYG{n}{g6}\PYG{p}{,}\PYG{o}{\PYGZti{}}\PYG{p}{,}\PYG{o}{\PYGZti{}}\PYG{p}{]} \PYG{p}{=} \PYG{n}{LimpStick8}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{w}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{d}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{true}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}g\PYGZsq{}}\PYG{p}{,} \PYG{l+m+mf}{1.3e10}\PYG{p}{);}
+    \PYG{n}{y}\PYG{p}{(}\PYG{l+m+mi}{6}\PYG{p}{,:)} \PYG{p}{=} \PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{y6}\PYG{p}{.}\PYG{o}{\PYGZsq{}}\PYG{p}{];}
+    \PYG{n}{g}\PYG{p}{(}\PYG{l+m+mi}{6}\PYG{p}{,:)} \PYG{p}{=} \PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{g6}\PYG{p}{];}
+
+\PYG{n}{hold} \PYG{n}{on}
+
+\PYG{n}{titlar} \PYG{p}{=} \PYG{p}{\PYGZob{}}\PYG{l+s}{\PYGZsq{}Bretti\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}Tvöfalt bretti\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}Sívalningur\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}Tvöfaldur sívalningur\PYGZsq{}}\PYG{p}{,}
+\PYG{l+s}{\PYGZsq{}Rör með innri radíus 10cm\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}Tvöfalt rör með innri radíus 10cm\PYGZsq{}}\PYG{p}{\PYGZcb{};}
+
+\PYG{k}{for} \PYG{n+nb}{i} \PYG{p}{=} \PYG{l+m+mi}{1}\PYG{p}{:}\PYG{l+m+mi}{6}
+    \PYG{n}{subplot}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{n+nb}{i}\PYG{p}{);}
+    \PYG{n}{plot}\PYG{p}{([}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{n}{h}\PYG{o}{.*}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{:}\PYG{n}{n}\PYG{p}{)],} \PYG{n}{y}\PYG{p}{(}\PYG{n+nb}{i}\PYG{p}{,:));}
+    \PYG{n}{title}\PYG{p}{(}\PYG{n}{titlar}\PYG{p}{(}\PYG{n+nb}{i}\PYG{p}{));}
+    \PYG{n}{xlabel}\PYG{p}{(}\PYGZdq{}\PYG{n}{Frávik} \PYG{p}{[}\PYG{n}{m}\PYG{p}{]}\PYGZdq{}\PYG{p}{);}
+    \PYG{n}{ylabel}\PYG{p}{(}\PYGZdq{}\PYG{n}{Lengd} \PYG{p}{[}\PYG{n}{m}\PYG{p}{]}\PYGZdq{}\PYG{p}{);}
+    \PYG{n}{deflection}\PYG{p}{(}\PYG{n+nb}{i}\PYG{p}{)} \PYG{p}{=} \PYG{n}{y}\PYG{p}{(}\PYG{n+nb}{i}\PYG{p}{,}\PYG{n}{n}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{k}{end}
+
+
+\PYG{c}{\PYGZpc{}\PYGZpc{} Jello sticks}
+\PYG{c}{\PYGZpc{} G.r.f. Young\PYGZsq{}s stuðli 50kPa.}
+\PYG{n}{clf}
+\PYG{n}{clear}
+\PYG{n}{n} \PYG{p}{=} \PYG{l+m+mi}{1000}\PYG{p}{;}
+\PYG{n}{hold} \PYG{n}{on}
+\PYG{k}{for} \PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.1}\PYG{p}{:}\PYG{l+m+mf}{0.05}\PYG{p}{:}\PYG{l+m+mf}{0.5}
+    \PYG{p}{[}\PYG{n}{y}\PYG{p}{,}\PYG{n}{g}\PYG{p}{,}\PYG{o}{\PYGZti{}}\PYG{p}{,}\PYG{n}{h}\PYG{p}{]} \PYG{p}{=} \PYG{n}{LimpStick8}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,}\PYG{l+m+mf}{0.5}\PYG{p}{,}\PYG{n}{d}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{n}{false}\PYG{p}{,}\PYG{l+s}{\PYGZsq{}k\PYGZsq{}}\PYG{p}{,}\PYG{l+m+mi}{50000}\PYG{p}{);}
+    \PYG{n}{plot}\PYG{p}{([}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{n}{h}\PYG{o}{.*}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{:}\PYG{l+m+mi}{1000}\PYG{p}{)],[}\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{n}{y}\PYG{p}{])}
+\PYG{k}{end}
+\PYG{n}{xlabel}\PYG{p}{(}\PYGZdq{}\PYG{n}{Frávik} \PYG{p}{[}\PYG{n}{m}\PYG{p}{]}\PYGZdq{}\PYG{p}{);}
+\PYG{n}{ylabel}\PYG{p}{(}\PYGZdq{}\PYG{n}{Lengd} \PYG{p}{[}\PYG{n}{m}\PYG{p}{]}\PYGZdq{}\PYG{p}{);}
+\PYG{n}{legend}\PYG{p}{(}\PYGZdq{}\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.1}\PYGZdq{}\PYG{p}{,} \PYGZdq{}\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.15}\PYGZdq{}\PYG{p}{,} \PYGZdq{}\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.2}\PYGZdq{}\PYG{p}{,} \PYGZdq{}\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.25}\PYGZdq{}\PYG{p}{,} \PYGZdq{}\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.3}\PYGZdq{}\PYG{p}{,} \PYGZdq{}\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.35}\PYGZdq{}\PYG{p}{,}
+\PYGZdq{}\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.4}\PYGZdq{}\PYG{p}{,} \PYGZdq{}\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.45}\PYGZdq{}\PYG{p}{,} \PYGZdq{}\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.5}\PYGZdq{}\PYG{p}{,} \PYGZdq{}\PYG{n}{Location}\PYGZdq{}\PYG{p}{,} \PYGZdq{}\PYG{n}{southwest}\PYGZdq{}\PYG{p}{);}
+\PYG{n}{hold} \PYG{n}{off}
+\PYG{c}{\PYGZpc{}\PYGZpc{} Gull}
+\PYG{n}{clf}
+\PYG{n}{clear}
+\PYG{n}{n} \PYG{p}{=} \PYG{l+m+mi}{1000}\PYG{p}{;}
+\PYG{n}{hold} \PYG{n}{on}
+\PYG{k}{for} \PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.1}\PYG{p}{:}\PYG{l+m+mf}{0.05}\PYG{p}{:}\PYG{l+m+mf}{0.5}
+    \PYG{p}{[}\PYG{n}{y}\PYG{p}{,}\PYG{n}{g}\PYG{p}{,}\PYG{o}{\PYGZti{}}\PYG{p}{,}\PYG{n}{h}\PYG{p}{]} \PYG{p}{=} \PYG{n}{LimpStick8}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,}\PYG{l+m+mf}{0.5}\PYG{p}{,}\PYG{n}{d}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{n}{false}\PYG{p}{,}\PYG{l+s}{\PYGZsq{}k\PYGZsq{}}\PYG{p}{,}\PYG{l+m+mf}{79e9}\PYG{p}{);}
+    \PYG{n}{plot}\PYG{p}{([}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{n}{h}\PYG{o}{.*}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{:}\PYG{l+m+mi}{1000}\PYG{p}{)],[}\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{n}{y}\PYG{p}{])}
+\PYG{k}{end}
+\PYG{n}{xlabel}\PYG{p}{(}\PYGZdq{}\PYG{n}{Frávik} \PYG{p}{[}\PYG{n}{m}\PYG{p}{]}\PYGZdq{}\PYG{p}{);}
+\PYG{n}{ylabel}\PYG{p}{(}\PYGZdq{}\PYG{n}{Lengd} \PYG{p}{[}\PYG{n}{m}\PYG{p}{]}\PYGZdq{}\PYG{p}{);}
+\PYG{n}{legend}\PYG{p}{(}\PYGZdq{}\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.1}\PYGZdq{}\PYG{p}{,} \PYGZdq{}\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.15}\PYGZdq{}\PYG{p}{,} \PYGZdq{}\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.2}\PYGZdq{}\PYG{p}{,} \PYGZdq{}\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.25}\PYGZdq{}\PYG{p}{,} \PYGZdq{}\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.3}\PYGZdq{}\PYG{p}{,} \PYGZdq{}\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.35}\PYGZdq{}\PYG{p}{,}
+\PYGZdq{}\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.4}\PYGZdq{}\PYG{p}{,} \PYGZdq{}\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.45}\PYGZdq{}\PYG{p}{,} \PYGZdq{}\PYG{n}{d} \PYG{p}{=} \PYG{l+m+mf}{0.5}\PYGZdq{}\PYG{p}{,} \PYGZdq{}\PYG{n}{Location}\PYGZdq{}\PYG{p}{,} \PYGZdq{}\PYG{n}{southwest}\PYGZdq{}\PYG{p}{);}
+\PYG{n}{hold} \PYG{n}{off}
+\end{Verbatim}
