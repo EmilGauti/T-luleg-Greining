@@ -1,0 +1,772 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb, amsthm, marvosym, permute, extsizes}
+\usepackage{siunitx, graphicx, float, enumitem, adjustbox, hyperref, bm}
+\usepackage{microtype, dsfont}
+\usepackage[normalem]{ulem}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage[icelandic]{babel}
+\usepackage{tikz}
+\newcommand{\explain}[2]{\underbrace{#1}_\textrm{$#2$}}
+\usepackage{minted}
+\usemintedstyle{perldoc}
+\parindent = 0pt
+
+\title{Heimaverkefni \\ \vspace{0.4cm} \large Töluleg Greining}
+\author{ Þorsteinn Jón Gautason,\\ Garðar Árni Skarphéðinsson,\\
+Emil Gauti Friðriksson}
+\begin{document}
+\maketitle
+\newpage
+
+\section*{Fræðin}
+GPS staðsetningakerfið byggist á því að fjöldi gervitungla á sporbaug um jörðina senda samtímis út merki sem lenda öll á viðtakanda á jörðu niðri. Tíminn sem það tekur merkið að komast til viðtakandans og staðsetning gervitunglana við sendingu merkisins, er notað til þess að reikna út staðsetningu viðtakandans á yfirborði jarðar, í þrívíðum hnitum $(x,y,z)$, með mikilli nákvæmni.\\
+Hin minnsta skekkja í mælingum getur valdið stórri skekkju í niðurstöðum, jafnvel upp á nokkra kílómetra, og þar með gert kerfið alveg gagnslaust. Sem betur fer eru atómklukkurnar í gervitunglunum sjálfum nákvæmar upp á nokkrar nanósekúndur, en það sama má ekki segja um klukkurnar í viðtakandanum í jörðu niðri. Vegna þessa bætist ein óþekkt stærð í reikninginn, þ.e. tímaskekkjan $d$. Til þess að fá niðurstöður fyrir óþekktu stærðirnar okkar fjórar, $(x,y,z,d)$, viljum við því miða við fjarlægðir frá að minnsta kosti fjórum gervitunglum. Ef staðsetning gervitungls númer $i$ er gefið með $(A_i, B_i, C_i)$ þá getum við skrifað verkefnið upp sem jöfnuhneppið:
+\begin{align*}
+r_1(x,y,z,d)&=\sqrt[]{(x-A_1)^2+(y-B_1)^2+(z-C_1)^2}-c(t_1-d)=0\\
+r_2(x,y,z,d)&=\sqrt[]{(x-A_2)^2+(y-B_2)^2+(z-C_2)^2}-c(t_2-d)=0\\
+r_3(x,y,z,d)&=\sqrt[]{(x-A_3)^2+(y-B_3)^2+(z-C_3)^2}-c(t_3-d)=0\\
+r_4(x,y,z,d)&=\sqrt[]{(x-A_4)^2+(y-B_4)^2+(z-C_4)^2}-c(t_4-d)=0
+\end{align*}
+þar sem hraði merkjanna frá gervitunglunum er ljóshraði: $c\approx299792.458$ km/sek. 
+\\
+Þetta má umrita sem:
+\begin{align*}
+(x-A_1)^2+(y-B_1)^2+(z-C_1)^2=c^2(t_1-d)^2\\
+(x-A_2)^2+(y-B_2)^2+(z-C_2)^2=c^2(t_2-d)^2\\
+(x-A_3)^2+(y-B_3)^2+(z-C_3)^2=c^2(t_3-d)^2\\
+(x-A_1)^2+(y-B_1)^2+(z-C_1)^2=c^2(t_1-d)^2
+\end{align*}
+Við munum nú framkvæma nokkrar útfærslur á lausnum fyrir þetta jöfnuhneppi.
+\newpage
+\section*{Dæmi 1}
+Leysum jöfnuhneppið hér að ofan með fjölbreytu Newton aðferðinni. Finnið staðsetningu viðtakandans á jörðinni $(x,y,z)$ og tímaskekkjuna $d$ fyrir þekktar staðsetningar gervituglanna í $(15600,7540,20140)$, $(18760,2750,18610)$, $(17610,14630,13480)$, $(19170,610,18390)$ í $km$, og tilsvarandi mæld tímagildi $0.07074$, $0.07220$, $0.07690$, $0.07242$ í sekúndum. Látum upphafsvigurinn vera $(x_0, y_0, z_0, d_0) = (0,0,6370,0)$. Lausnirnar eru um það bil $(x,y,z) = (-41.77271,-16.78919,6370.0596)$ og $d =-3.201566 \cdot 10^{-3}$ sek. 
+
+\subsection*{Lausn}
+Við skrifuðum og notuðum eftirfarandi forrit:
+
+\begin{minted}[breaklines, linenos]{matlab}
+function [r, d] = tolvu2_1(r0,r1, r2, r3, r4, n)
+%tolvu2_1 tekur inn upphafsvigurinn r0 og vigrana r1, r2, r3 og r4 sem innihalda x, y og z hnit
+%gervitungla ásamt mældun tímabilum d. Heiltalan n tilgreinir fjölda ítrana. Fallið skilar staðsetningu móttakara
+%og tímaskekkju d.
+
+%Skilgreinum breytur
+syms x y z d
+%Skilgreinum fasta og vigra
+f = cell(4,1);
+Df = cell(4);
+f1 = zeros(4,1);
+Df1 = zeros(4,4);
+c = 299792.458;
+vars = [x,y,z,d];
+%Röðum föllum inn í vigurinn f
+f{1} = sqrt((x - r1(1))^2 + (y - r1(2))^2 + (z - r1(3))^2) - c*(r1(4) - d);
+f{2} = sqrt((x - r2(1))^2 + (y - r2(2))^2 + (z - r2(3))^2) - c*(r2(4) - d);
+f{3} = sqrt((x - r3(1))^2 + (y - r3(2))^2 + (z - r3(3))^2) - c*(r3(4) - d);
+f{4} = sqrt((x - r4(1))^2 + (y - r4(2))^2 + (z - r4(3))^2) - c*(r4(4) - d);
+%Diffrum föllin og setjum niðurstöðurnar í fylkið Df
+for i = 1:4
+    for j = 1:4
+        Df{i,j} = diff(f{i}, vars(j));
+    end
+end
+%Breytum föllunum í fallshandföng
+for i = 1:4
+    f{i} = matlabFunction(f{i}, 'Vars', [x,y,z,d]);
+    for j = 1:4
+        Df{i,j} = matlabFunction(Df{i,j}, 'Vars', [x,y,z,d]);
+    end
+end
+%Framkvæmum reikninga
+for k = 1:n
+    for i = 1:4
+        h = f{i};
+        f1(i) = h(r0(1), r0(2), r0(3), r0(4));
+        for j = 1:4
+            g = Df{i,j};
+            Df1(i,j) = g(r0(1), r0(2), r0(3), r0(4));
+        end
+    end
+    r0 = r0 - Df1\f1;
+end
+%Skilum niðurstöðum
+r = [r0(1), r0(2), r0(3)];
+d = r0(4);
+end
+\end{minted}
+Sem gefur niðurstöðurnar
+\begin{minted}[linenos, breaklines]{matlab}
+>> [s1, d1] = tolvu2_1(r0,r1, r2, r3, r4, n)
+s1 =
+    -4.177270957072398e+01    -1.678919410647429e+01     6.370059559223409e+03
+d1 =
+    -3.201565829593686e-03
+\end{minted}
+Niðurstöðurnar eru í samræmi við gefin gildi.
+\newpage
+
+\section*{Dæmi 2}
+Skrifið \mintinline{matlab}{MATLAB} forrit sem leysir verkefnið með annars stigs jöfnu. 
+
+\subsection*{Lausn}
+Til þess að setja verkefnið okkar á form annars stigs jöfnu viljum við finna leið til þess að skipta út breytunum $x, y, z$ fyrir jafngildar jöfnur háðar $d$, og enda þannig með jöfnu sem er aðeins háð $d$. Við getum gert þetta með því að draga neðri þrjár línur jöfnuhneppisins okkar frá þeirri fyrstu, og umrita jöfnuna sem það gefur okkar sem: 
+\begin{align*}
+x\cdot\vec{u}_x+y\cdot\vec{u}_y+z\cdot\vec{u}_z+d\cdot\vec{u}_d+\vec{w}=0
+\end{align*}
+Þar sem að vigrarnir verða:
+\begin{align*}
+\vec{u}_x&=2\cdot(A_2-A_1,A_3-A_1,A_4-A_1)\\
+\vec{u}_y&=2\cdot(B_2-B_1,B_3-B_1,B_4-B_1)\\
+\vec{u}_z&=2\cdot(C_2-C_1,C_3-C_1,C_4-C_1)\\
+\vec{u}_d&=2c^2\cdot(t_1-t_2,t_1-t_3,t_1-t_4)
+\end{align*}
+og stök vikursins $\vec{w}$ eru:
+\begin{align*}
+w_j=(A_1^2+B_1^2+C_1^2-A_{j+1}^2-B_{j+1}^2-C_{j+1}^2+c^2(t_{j+1}^2-t_1^2)),\quad    j=1,2,3.
+\end{align*}
+Nú getum við notað þetta til þess að finna leið til þess að rita $x$ sem fall af $d$ með því að reikna ákveðuna:
+\begin{align*}
+det(\vec{u}_y|\vec{u}_z|x\cdot\vec{u}_x+y\cdot\vec{u}_y+z\cdot\vec{u}_z+d\cdot\vec{u}_d+\vec{w})=0
+\end{align*}
+En vegna línulegra eiginleika þessara vigra getum við umritað þetta sem:
+\begin{align*}
+x\cdot det(\vec{u}_y|\vec{u}_z|\vec{u}_x)+d\cdot det(\vec{u}_y|\vec{u}_z|\vec{u}_d) +det(\vec{u}_y|\vec{u}_z|\vec{w})=0
+\end{align*}
+Þ.a. við fáum:
+\begin{align*}
+x=-\frac{d\cdot \det(\vec{u}_y|\vec{u}_z|\vec{u}_d) +\det(\vec{u}_y|\vec{u}_z|\vec{w})}{\det(\vec{u}_y|\vec{u}_z|\vec{u}_x)}
+\end{align*}
+og fáum á sama hátt fyrir $y$ og $z$:
+\begin{align*}
+y&=-\frac{d\cdot \det(\vec{u}_x|\vec{u}_z|\vec{u}_d) +\det(\vec{u}_x|\vec{u}_z|\vec{w})}{\det(\vec{u}_x|\vec{u}_z|\vec{u}_y)}\\
+\\
+z&=-\frac{d\cdot \det(\vec{u}_x|\vec{u}_y|\vec{u}_d) +\det(\vec{u}_x|\vec{u}_y|\vec{w})}{\det(\vec{u}_x|\vec{u}_y|\vec{u}_z)}
+\end{align*}
+Búum nú til \mintinline{matlab}{MATLAB} forrit sem reiknar þessar ákveður og stingum þessum útreiknuðu gildum inn í fyrstu jöfnuna í jöfnuhneppinu okkar. Jafnan verður þá annars stigs jafna í $d$ sem við látum forritið leysa eins og hverja aðra annars stigs jöfnu. Sjá má forritið í \texttt{Skipanaskrá}.\\
+Þegar kóðinn er keyrður fást lausnirnar $d=-3.2\cdot 10^{-3}$ sek. og $d=1.8\cdot 10^{-1}$ sek. Fyrri lausnin er sú rétta sem við bjuggumst við að fá, en hin lausnin er aðeins afleiðing þess að við notuðum annars stigs lausn til þess að finna $d$, og fengum því aðra lausn með að auki. 
+
+\newpage
+
+\section*{Dæmi 3}
+ Með Symbolic Toolbox í \mintinline{matlab}{MATLAB} má leysa Dæmi 2 á annan hátt. Skilgreinið breyturnar með \mintinline{matlab}{syms} og leysið síðan verkefnið með \mintinline{matlab}{solve} skipuninni. Notið \mintinline{matlab}{subs} til að meta niðurstöðurnar sem fleyti-tölur.
+  
+\subsection*{Lausn}
+Við skrifuðum og notuðum forritið
+\begin{minted}[linenos,breaklines]{matlab}
+function [r, d] = tolvu2_3(r1, r2, r3, r4)
+%Fallið reiknar út staðsetingu móttakara út frá upplýsingum frá
+%gervitunglum. Það tekur inn 4 vigra sem innihalda x, y og z hnit fjögurra
+%gervitungla ásamt sendingartímum.
+
+%Skilgreinum breytur
+syms x y z d
+c = 299792.458;  %ljóshraði
+%Skilgreinum föllin okkar
+f = sqrt((x - r1(1))^2 + (y - r1(2))^2 + (z - r1(3))^2) - c*(r1(4) - d);
+g = sqrt((x - r2(1))^2 + (y - r2(2))^2 + (z - r2(3))^2) - c*(r2(4) - d);
+h = sqrt((x - r3(1))^2 + (y - r3(2))^2 + (z - r3(3))^2) - c*(r3(4) - d);
+j = sqrt((x - r4(1))^2 + (y - r4(2))^2 + (z - r4(3))^2) - c*(r4(4) - d);
+
+%Leysum með solve skipuninni
+S = solve(f,g,h,j,x,y,z,d);
+
+%Skilum niðurstöðum
+r  = [double(S.x), double(S.y), double(S.z)];
+d = double(S.d);
+end
+\end{minted}
+Sem gefur niðurstöðurnar
+\begin{minted}[linenos, breaklines]{matlab}
+>> [s2, d2] = tolvu2_3(r1, r2, r3, r4)
+s2 =
+    -4.177270957081724e+01    -1.678919410651845e+01     6.370059559223352e+03
+d2 =
+    -3.201565829594065e-03
+\end{minted}
+Niðurstöður eru í samræmi við gefin gildi.
+
+\newpage
+
+\section*{Dæmi 4}
+Setjið nú upp próf fyrir skilyrðin á GPS verkefninu. Skilgreinum staðsetningu gervitunglanna $(A_i, B_i, C_i)$ í kúluhnitum með $(\rho, \phi_i, \theta_i)$ þ.a.
+\begin{align*}
+A_i&=\rho\cos(\phi_i)\cos(\theta_i)\\
+B_i&=\rho\cos(\phi_i)\sin(\theta_i)\\
+C_i&=\rho\sin(\phi_i)
+\end{align*}
+þar sem $\rho = 26570$ km er fast gildi, en $0\leq\phi_i\leq\pi/2$ og $0\leq\theta_i\leq2\pi$ fyrir $i=1,...,4$ sem valið er af handahófi. $\phi$ hnitin eru takmörkuð þannig að gervitunglin fjögur séu í efra hálfhveli jarðar. Veljum $x=0, y=0, z=6370, d=0.0001$, og reiknið tilsvarandi fjarlægð frá gervitunglunum $R_i=\sqrt[]{A_i^2 +B_i^2 + (C_i-6370)^2}$ og sendingatímann $t_i=d+R_i/c0$.\\
+	Við sérsníðum skilgreininu á skekkjumögnunarstuðli fyrir þetta verkefni. Atóm klukkurnar hafa skekkju upp á aðeins $10$ nanósekúndur, eða $10^{-8}$ sekúndur. Því er mikilvægt að skoða áhrif breytinga í sendingartíma af þessari stærðargráðu. Við ljóshraða svara $\Delta t_i=10^{-8}$ sekúndur til $10^{-8}c\approx3$ metra. Látum úttaksskekkjuna vera breytingu í staðsetningu $||(\Delta x, \Delta y, \Delta z)||_\infty$, sem kemur til vegna breytinga í $t_i$, einnig í metrum. Þá getum við skilgreint einingalaust:
+\begin{align*}
+\text{skekkjumögnunarstuðull} = \frac{||(\Delta x, \Delta y, \Delta z)||_\infty}{c||(\Delta t_1,...,\Delta t_m)||_\infty}
+\end{align*}
+og við getum einnig skilgreint ástandtölu verkefnisins sem hámarks skekkjumögnunarstuðul fyrir öll lítil $\Delta t_i$.\\
+	Látum öll $t_i$ vera þannig að $\Delta t_i = +10^{-8}$ eða $-10^{-8}$, en þannig að ekki öll hafi sama gildi. Ritum nýju lausnina á jöfnuhneppinu sem $(\overline{x},\overline{y},\overline{z},\overline{d})$ og reiknið breytinguna í staðsetningu $||(\Delta x, \Delta y, \Delta z)||_\infty$ og skekkjumögnunarstuðulinn. Prófið mismunandi tilfelli fyrir valda tíma $\Delta t_i$. Hver er hámarksskekkja fyrir staðsetningu í metrum? Metið ástandstöluna fyrir verkefnið út frá skekkjumögnunarstuðlunum sem þið hafið reiknað. 
+
+\subsection*{Lausn}
+
+Við skrifuðum reikniritið
+
+\begin{minted}[linenos, breaklines]{matlab}
+%Stillum slembitölugjafann
+rng(2908)
+%Keyrum fyrir mismunandi tímaskekkjur
+for n = 1:3
+    %Núllstillum tímabundna vigra
+    tmean4 = zeros(1,10);
+    terror4 = zeros(1,10);
+    %Keyrum 10 sinnum og tökum svo meðaltal
+    for j = 1:10
+        %Reiknum staðsetningar í kartesískum hnitum
+        for i = 1:4
+            phi = rand*pi/2;
+            theta = rand*2*pi;
+            ABC1(i,:) = ABC(rho,phi,theta);
+        end
+        %Reiknum radíal fjarlægð og sendingartíma
+        for i = 1:4
+            R4(i) = norm(ABC1(i,:) - pos);
+            t4(i) = dd + R4(i)/c + delta(n,i);
+        end
+        %Búum til nýjan staðsetningarvigur sem inniheldur sendingartíma
+        for i = 1:4
+            stad4(i,:) = [ABC1(i,:), t4(i)];
+        end
+        %Fáum reiknaða niðurstöðu með forriti úr 3. lið
+        [r_n4, d_n4] = tolvu2_1(r0, stad4(1,:), stad4(2,:), stad4(3,:), stad4(4,:), n);
+        %Tökum meðaltal af áhugaverðum stærðum
+        tmean4(j) = norm(r_n4 - pos, inf);
+        terror4(j) = norm(r_n4 - pos, inf)/(c*1e-8);
+    end
+    %Reiknum áhugaverðar stærðir
+    error4(n) = mean(tmean4)*1e3;
+    emf4(n) = mean(terror4);
+end
+\end{minted}
+Þetta gefur niðurstöðurnar
+\begin{minted}[linenos, breaklines]{matlab}
+emf4 =
+     4.401193309866455e+00     9.120733409101074e+00     1.437247040686717e+01
+error4 =
+     1.319444560498020e+01     2.734327087477130e+01     4.308758230806968e+01
+\end{minted}
+Þar sem fyrsta gildið er reiknað með einu gervitungli sem hefur neikvæða tímaskekkju, seinna gildið er reiknað með tveimur sem hafa neikvæða tímaskekkju og það þriðja með þremur. Við sjáum að skekkjumögnunarstuðullinn og skekkjan er minnst þegar flest tunglin eru með jákvæða tímaskekkju.
+
+\newpage
+
+\section*{Dæmi 5}
+Endurtakið Dæmi 4 fyrir hóp af gervitunglum sem öll eru nokkuð nálægt hvoru öðru. Veljið öll $\phi_i$ innan við $5\%$ frá hvoru öðru, og öll $\theta_i$ innan við $5\%$ af hvoru öðru. Leysið með og án sömu inntaksskekkju og í Dæmi 4. Finnið hámarkskekkjuna fyrir staðsetningu og skekkjumögnunarstuðulinn. Berið saman niðurstöðurnar sem fást þegar gervitunglin eru þétt saman og þegar þau eru dreifð. 
+
+\subsection*{Lausn}
+
+Við skrifuðum reikniritið
+
+\begin{minted}[linenos, breaklines]{matlab}
+%Upphafsstillum slembitölugjafa
+rng(2908);
+%Keyrum fyrir mismunandi tímaskekkjur í gervitunglum
+for n = 1:3
+    %Núllstillum tímabundna vigra
+    tmean5 = zeros(1,10);
+    terror5 = tmean5;
+    tcond5 = tmean5;
+    %Byrjum með slembin horn
+    phi1 = rand*pi/2; 
+    theta1 = rand*2*pi;
+    %Keyrum 10 sinnum og tökum svo meðaltal
+    for j = 1:10
+        %Reiknum staðsetningu gervitungla í kartesískum hnitum
+        ABC1(1,:) = ABC(rho, phi1, theta1);
+        for i = 2:4 
+            phi = phi1 - 0.025*2*pi + rand*0.05*2*pi;
+            theta = theta1 - 0.025*2*pi + rand*0.05*2*pi;
+            ABC1(i, :) = ABC(rho,phi,theta);
+        end
+        %Reiknum radíal fjarlægð og sendingartíma
+        for i = 1:4
+            R5(i) = norm(ABC1(i,:) - pos);
+            t5(i) = dd + R5(i)/c + delta(n,i);
+        end
+        %Búum til nýjan staðsetningarvigur sem inniheldur tímaskekkju
+        for i = 1:4
+            stad5(i,:) = [ABC1(i,:), t5(i)];
+        end
+        %Fáum reiknaða niðurstöðu með forriti úr 3. lið
+        [r_n5, d_n5] = tolvu2_1(r0, stad5(1,:), stad5(2,:), stad5(3,:), stad5(4,:), n);
+        %Tökum meðaltal af áhugaverðum stærðum
+        tmean5(j) = norm(r_n5 - pos, inf);
+        terror5(j) = norm(r_n5 - pos, inf)/(c*1e-8);
+    end
+    %Reiknum áhugaverðar stærðir
+    error5(n) = mean(tmean5)*1e3;
+    emf5(n) = mean(terror5);
+end
+\end{minted}
+Þetta gefur niðurstöðurnar
+\begin{minted}[linenos, breaklines]{matlab}
+emf5 =
+     2.125043673231399e+06     2.844268864468118e+05     4.010540072344265e+04
+error5 =
+     6.370720661553898e+06     8.526903540917658e+05     1.202329666195585e+05
+\end{minted}
+Þar sem gildin eru með sama fyrirkomulagi og í lið 4. Nú er uppröðunin þar sem flest tunglin hafa neikvæða skekkju með minnsta skekkjumögnunarstuðulinn og skekkju. Tökum einnig eftir því að mesta skekkjan er upp á \SI{6.37}{\mega\metre}, eða \SI{6370}{\kilo\metre}, sem er um 16\% af ummáli jarðar, svo skynsamlegt væri að reyna að hafa sporbrautir tunglanna þannig að oftast sé hægt að taka mælingar frá vel dreifðum gervitunglum.
+\newpage
+
+\section*{Dæmi 6}
+Ákvarðið hvort lækka megi skekkjuna og ástandstöluna fyrir gervitunglamælingarnar með því að bæta við fleiri gervitunglun. Skoðið aftur dreifðu gervitunglin úr Dæmi 4 og bætið við fjórum í viðbót. Hannið Gauss-Newton ítrun til þess að leysa lágmörks kvaðrata verkefnið fyrir átta jöfnur með fjórum breytum, $(x,y,z,d)$. Hvað er góður upphafsvigur? Finnið hámarksskekkju í GPS staðsetningu, og metið ástandstöluna. Takið saman niðurstöðurnar ykkar frá fjórum dreifðum, fjórum þéttum og átta dreifðum gervitunglum. Hvaða tilfelli er best og hver er hámarks GPS skekkjan, í metrum, sem búast mætti við út aðeins vegna merkjanna frá gervitunglunum?
+
+\subsection*{Lausn}
+
+Við skrifuðum reikniritið
+
+\begin{minted}[linenos, breaklines]{matlab}
+%Upphafsstillum slembitölugjafa
+rng(2508)
+%Keyrum fyrir mismunandi tímaskekkjur
+for n = 1:7
+    %Núllstillum tímabundna vigra
+    tmean6 = zeros(1,10);
+    terror6 = zeros(1,10);
+    %Keyrum 10 sinnum og tökum meðaltal
+    for j = 1:10
+        %Veljum slembnar staðsetningar fyrir gervitunglin
+        for i = 1:8
+            phi = rand*pi/2;
+            theta = rand*2*pi;
+            ABC16(i,:) = ABC(rho,phi,theta);
+        end
+        %Reiknum sendingartíma og radíal fjarlægð
+        for i = 1:8
+            R6(i) = norm(ABC16(i,:) - pos);
+            t6(i) = dd + R6(i)/c + delta6(n,i);
+        end
+        %Búum til fylki til notkunar í reikningum
+        for i = 1:8
+            r6(i,:) = [ABC16(i,:), t6(i)];
+        end
+        %Framkvæmum reikninga
+        rx = tolvu2_61(r0,r6,n);
+        tmean6(j) = norm(rx(1:3) - pos, inf);
+        terror6(j) = norm(rx(1:3) - pos, inf)/(c*1e-8);
+    end
+    %Skilum niðurstöðum
+    error6(n) = mean(tmean6)*1e3;
+    emf6(n) = mean(terror6);
+end
+\end{minted}
+Þetta gefur niðurstöðurnar
+\begin{minted}[linenos, breaklines]{matlab}
+emf6 =
+  Columns 1 through 5
+     7.030969215666395e-04     7.734678589138995e-04     2.091662954281205e-03     6.079705378636498e+00     1.568872717635756e-03
+  Columns 6 through 7
+     9.800616451295710e-04     2.205703913983312e-03
+error6 =
+  Columns 1 through 5
+     2.107831543286961e-03     2.318798306077952e-03     6.270647783715039e-03     1.822649819377256e+01     4.703362083091633e-03
+  Columns 6 through 7
+     2.938150895849178e-03     6.612533979932778e-03
+\end{minted}
+Við sjáum að við fáum mestu skekkju og skekkjumögnunarstuðul þegar um hlemingur gervitunglanna er með neikvæða tímaskekkju og helmingur með jákvæða tímaskekkju. Athugum einnig að öll gildin eru hér minni en í lið 4 þar sem við vorum einungis með fjögur gervitungl.\\
+Tökum öll gildin saman í töflu:
+
+\begin{table}[H]
+\caption{Tafla sem sýnir emf-gildi}
+\begin{center}
+	\begin{tabular}{c|c|c|c}
+    	4 gervitungl & 4 hópuð gervitungl & 8 gervitungl & Tímaskekkjur\\
+        \hline
+        4.401 & 2125043.673 & 0.000703 & (++++)+++ -\\
+        9.120 & 284426.886 & 0.000773 &  (++++)++ - -\\
+        14.372 & 40105.400 & 0.00209 &  (++++)+ - - -\\
+         &  & 6.07 & ++++ - - - - \\
+         &  & 0.00156 & +++ - - - - - \\
+         &  & 0.000980 & ++ - - - - - - \\
+         &  & 0.00220 & + - - - - - - - \\
+    \end{tabular}
+\end{center}
+\end{table}
+\begin{table}[H]
+\caption{Tafla sem sýnir skekkju í metrum}
+\begin{center}
+	\begin{tabular}{c|c|c|c}
+    	4 gervitungl & 4 hópuð gervitungl & 8 gervitungl & Tímaskekkjur\\
+        \hline
+        13.194m & 6370720.661m & 0.00210m & (++++)+++ -\\
+        27.343m & 852690.354m & 0.00231m &  (++++)++ - -\\
+        43.087m & 120232.966m & 0.00627m &  (++++)+ - - -\\
+         &  & 18.226m & ++++ - - - - \\
+         &  & 0.00470m & +++ - - - - - \\
+         &  & 0.00293m & ++ - - - - - - \\
+         &  & 0.00661m & + - - - - - - - \\
+    \end{tabular}
+\end{center}
+\end{table}
+
+Af þessum gögnum sjáum við að mælingarnar verða talsvert ónákvæmari þegar gervitunglin eru hópuð saman frekar en dreifð. Við sjáum einnig að nákvæmnin eykst þegar við bætum við fleiri gervitunglum, eins og búast mátti við. Athyglisvert er að sjá að skekkjumögnunarstuðullinn virðist ná hámarki þegar við höfum jafnan fjölda gervitungla með jákvæða tímaskekkju annars vegar og neikvæða hins vegar. Ef við gerum ráð fyrir að hverju sinni séu að minnsta kosti $5$ gervitungl að senda á okkur merki þá getum við ályktað að mesta mögulega skekkjan sem við gætum fengið sé af stærðargráðunni $10^2$, en það er þó afar ólíklegt. 
+
+\newpage
+\section*{Forrit}
+\subsection*{Skipanaskrá}
+\begin{minted}[breaklines]{matlab}
+%% Skilgreinum fasta og stærðir
+%%Fyrsti og annar liður
+r1 = [15600, 7540, 20140, 0.07074];
+r2 = [18760, 2750, 18610, 0.07220];
+r3 = [17610, 14630, 13480, 0.07690];
+r4 = [19170, 610, 18390, 0.07242];
+r0 = [0, 0, 6370, 0];
+n = 100;
+%%Fjórði og fimmti liður
+c = 299792.458;
+dd = 0.0001;
+pos = [0, 0, 6370];
+rho = 26570;
+ABC1 = zeros(4, 3);
+R4 = zeros(1,4);
+R5 = R4;
+t4 = R4;
+t5 = R4;
+stad4 = zeros(4);
+stad5 = stad4;
+emf4 = zeros(1,3);
+error4 = emf4;
+emf5 = emf4;
+error5 = emf4;
+delta = [1,1,1,-1;1,1,-1,-1;1,-1,-1,-1].*1e-8;
+ABC = @(rho, phi, theta) [rho*cos(phi)*cos(theta), rho*cos(phi)*sin(theta), rho*sin(phi)];
+%%Sjötti liður
+delta6 = zeros(7,8);
+for i = 1:7
+    delta6(i,:) = [ones(1, 8-i), ones(1, i)*(-1)];
+end
+ABC16 = zeros(8, 3);
+R6 = zeros(1,8);
+t6 = zeros(1,8);
+r6 = zeros(8,4);
+emf6 = zeros(1,7);
+error6 = emf6;
+%% Liður 1
+[s1, d1] = tolvu2_1(r0,r1, r2, r3, r4, n);
+%% Liður 2
+syms d x y z
+
+A1 = 15600;
+A2 = 18760;
+A3 = 17610;
+A4 = 19170;
+B1 = 7540;
+B2 = 2750;
+B3 = 14630;
+B4 = 610;
+C1 = 20140;
+C2 = 18610;
+C3 = 13480;
+C4 = 18390;
+t21 = 0.07074;
+t22 = 0.07220;
+t23 = 0.07690;
+t24 = 0.07242;
+
+
+M1x = [2*(B2-B1), 2*(C2-C1), 2*(A2-A1); 2*(B3-B1), 2*(C3-C1), 2*(A3-A1); 2*(B4-B1), 2*(C4-C1), 2*(A4-A1)];
+M2x = [2*(B2-B1), 2*(C2-C1), 2*c^2*(t21-t22); 2*(B3-B1), 2*(C3-C1), 2*c^2*(t21-t23); 2*(B4-B1), 2*(C4-C1), 2*c^2*(t21-t24)];
+M3x = [2*(B2-B1), 2*(C2-C1), (A1^2+B1^2+C1^2)-(A2^2+B2^2+C2^2)+c^2*(t22^2-t21^2); 2*(B3-B1), 2*(C3-C1), (A1^2+B1^2+C1^2)-(A3^2+B3^2+C3^2)+c^2*(t23^2-t21^2); 2*(B4-B1), 2*(C4-C1),(A1^2+B1^2+C1^2)-(A4^2+B4^2+C4^2)+c^2*(t24^2-t21^2)];
+m21x = det(M2x)/det(M1x);
+m31x = det(M3x)/det(M1x);
+
+
+M1y = [2*(A2-A1), 2*(C2-C1), 2*(B2-B1); 2*(A3-A1), 2*(C3-C1), 2*(B3-B1); 2*(A4-A1), 2*(C4-C1), 2*(B4-B1)];
+M2y = [2*(A2-A1), 2*(C2-C1), 2*c^2*(t21-t22); 2*(A3-A1), 2*(C3-C1), 2*c^2*(t21-t23); 2*(A4-A1), 2*(C4-C1), 2*c^2*(t21-t24)];
+M3y = [2*(A2-A1), 2*(C2-C1), (A1^2+B1^2+C1^2)-(A2^2+B2^2+C2^2)+c^2*(t22^2-t21^2); 2*(A3-A1), 2*(C3-C1), (A1^2+B1^2+C1^2)-(A3^2+B3^2+C3^2)+c^2*(t23^2-t21^2); 2*(A4-A1), 2*(C4-C1),(A1^2+B1^2+C1^2)-(A4^2+B4^2+C4^2)+c^2*(t24^2-t21^2)];
+m21y = det(M2y)/det(M1y);
+m31y = det(M3y)/det(M1y);
+
+
+M1z = [2*(A2-A1), 2*(B2-B1), 2*(C2-C1); 2*(A3-A1), 2*(B3-B1), 2*(C3-C1); 2*(A4-A1), 2*(B4-B1), 2*(C4-C1)];
+M2z = [2*(A2-A1), 2*(B2-B1), 2*c^2*(t21-t22); 2*(A3-A1), 2*(B3-B1), 2*c^2*(t21-t23); 2*(A4-A1), 2*(B4-B1), 2*c^2*(t21-t24)];
+M3z = [2*(A2-A1), 2*(B2-B1), (A1^2+B1^2+C1^2)-(A2^2+B2^2+C2^2)+c^2*(t22^2-t21^2); 2*(A3-A1), 2*(B3-B1), (A1^2+B1^2+C1^2)-(A3^2+B3^2+C3^2)+c^2*(t23^2-t21^2); 2*(A4-A1), 2*(B4-B1),(A1^2+B1^2+C1^2)-(A4^2+B4^2+C4^2)+c^2*(t24^2-t21^2)];
+m21z = det(M2z)/det(M1z);
+m31z = det(M3z)/det(M1z);
+
+
+a = m21x^2+m21y^2+m21z^2-c^2;
+b = 2*m21x*m31x + 2*m21x*A1 + 2*m21y*m31y + 2*m21y*B1 + 2*m21z*m31z + 2*m21z*C1 + 2*c^2*t21;
+cc = m31x^2 + 2*m31x*A1 +A1^2 + m31y^2 + 2*m31y*B1 + B1^2 + m31z^2 + 2*m31z*C1 + C1^2 - c^2*t21^2;
+lausn1 = (-b+sqrt(b^2-4*a*cc))/(2*a);
+lausn2 = (-b-sqrt(b^2-4*a*cc))/(2*a);
+%% Liður 3
+[s2, d2] = tolvu2_3(r1, r2, r3, r4);
+%% Liður 4
+%Keyrum fyrir mismunandi tímaskekkjur
+rng(2908)
+for n = 1:3
+    %Núllstillum tímabundna vigra
+    tmean4 = zeros(1,10);
+    terror4 = zeros(1,10);
+    tcond4 = zeros(1,10);
+    %Keyrum 10 sinnum og tökum svo meðaltal
+    for j = 1:10
+        %Reiknum staðsetningar í kartesískum hnitum
+        for i = 1:4
+            phi = rand*pi/2;
+            theta = rand*2*pi;
+            ABC1(i,:) = ABC(rho,phi,theta);
+        end
+        %Reiknum radíal fjarlægð og sendingartíma
+        for i = 1:4
+            R4(i) = norm(ABC1(i,:) - pos);
+            t4(i) = dd + R4(i)/c + delta(n,i);
+        end
+        %Búum til nýjan staðsetningarvigur sem inniheldur sendingartíma
+        for i = 1:4
+            stad4(i,:) = [ABC1(i,:), t4(i)];
+        end
+        %Fáum reiknaða niðurstöðu með forriti úr 3. lið
+        [r_n4, d_n4] = tolvu2_1(r0, stad4(1,:), stad4(2,:), stad4(3,:), stad4(4,:), 10);
+        %Tökum meðaltal af áhugaverðum stærðum
+        tmean4(j) = norm(r_n4 - pos, inf);
+        terror4(j) = norm(r_n4 - pos, inf)/(c*1e-8);
+    end
+    %Reiknum áhugaverðar stærðir
+    error4(n) = mean(tmean4)*1e3;
+    emf4(n) = mean(terror4);
+end
+%% Liður 5
+%Keyrum fyrir mismunandi tímaskekkjur í gervitunglum
+rng(2908);
+for n = 1:3
+    %Núllstillum tímabundna vigra
+    tmean5 = zeros(1,10);
+    terror5 = tmean5;
+    tcond5 = tmean5;
+    %Byrjum með slembin horn
+    phi1 = rand*pi/2; 
+    theta1 = rand*2*pi;
+    %Keyrum 10 sinnum og tökum svo meðaltal
+    for j = 1:10
+        %Reiknum staðsetningu gervitungla í kartesískum hnitum
+        ABC1(1,:) = ABC(rho, phi1, theta1);
+        for i = 2:4 
+            phi = phi1 - 0.025*2*pi + rand*0.05*2*pi;
+            theta = theta1 - 0.025*2*pi + rand*0.05*2*pi;
+            ABC1(i, :) = ABC(rho,phi,theta);
+        end
+        %Reiknum radíal fjarlægð og sendingartíma
+        for i = 1:4
+            R5(i) = norm(ABC1(i,:) - pos);
+            t5(i) = dd + R5(i)/c + delta(n,i);
+        end
+        %Búum til nýjan staðsetningarvigur sem inniheldur tímaskekkju
+        for i = 1:4
+            stad5(i,:) = [ABC1(i,:), t5(i)];
+        end
+        %Fáum reiknaða niðurstöðu með forriti úr 3. lið
+        [r_n5, d_n5] = tolvu2_1(r0, stad5(1,:), stad5(2,:), stad5(3,:), stad5(4,:), n);
+        %Tökum meðaltal af áhugaverðum stærðum
+        tmean5(j) = norm(r_n5 - pos, inf);
+        terror5(j) = norm(r_n5 - pos, inf)/(c*1e-8);
+    end
+    %Reiknum áhugaverðar stærðir
+    error5(n) = mean(tmean5)*1e3;
+    emf5(n) = mean(terror5);
+end
+%% Liður 6
+%Keyrum fyrir mismunandi tímaskekkjur
+rng(2508)
+for n = 1:7
+    %Núllstillum tímabundna vigra
+    tmean6 = zeros(1,10);
+    terror6 = zeros(1,10);
+    %Keyrum 10 sinnum og tökum meðaltal
+    for j = 1:10
+        %Veljum slembnar staðsetningar fyrir gervitunglin
+        for i = 1:8
+            phi = rand*pi/2;
+            theta = rand*2*pi;
+            ABC16(i,:) = ABC(rho,phi,theta);
+        end
+        %Reiknum sendingartíma og radíal fjarlægð
+        for i = 1:8
+            R6(i) = norm(ABC16(i,:) - pos);
+            t6(i) = dd + R6(i)/c + delta6(n,i);
+        end
+        %Búum til fylki til notkunar í reikningum
+        for i = 1:8
+            r6(i,:) = [ABC16(i,:), t6(i)];
+        end
+        %Framkvæmum reikninga
+        rx = tolvu2_61(r0,r6,n);
+        tmean6(j) = norm(rx(1:3) - pos, inf);
+        terror6(j) = norm(rx(1:3) - pos, inf)/(c*1e-8);
+    end
+    error6(n) = mean(tmean6)*1e3;
+    emf6(n) = mean(terror6);
+end
+\end{minted}
+
+\subsection*{forrit1}
+
+\begin{minted}[breaklines]{matlab}
+function [r, d] = tolvu2_1(r0,r1, r2, r3, r4, n)
+%tolvu2_1 tekur inn upphafsvigurinn r0 og vigrana r1, r2, r3 og r4 sem innihalda x, y og z hnit
+%gervitungla ásamt mældun tímabilum d. Heiltalan n tilgreinir fjölda ítrana. Fallið skilar staðsetningu móttakara
+%og tímaskekkju d.
+
+%Skilgreinum breytur
+syms x y z d
+%Skilgreinum fasta og vigra
+f = cell(4,1);
+Df = cell(4);
+f1 = zeros(4,1);
+Df1 = zeros(4,4);
+c = 299792.458;
+vars = [x,y,z,d];
+
+%Röðum föllum inn í vigurinn f
+f{1} = sqrt((x - r1(1))^2 + (y - r1(2))^2 + (z - r1(3))^2) - c*(r1(4) - d);
+f{2} = sqrt((x - r2(1))^2 + (y - r2(2))^2 + (z - r2(3))^2) - c*(r2(4) - d);
+f{3} = sqrt((x - r3(1))^2 + (y - r3(2))^2 + (z - r3(3))^2) - c*(r3(4) - d);
+f{4} = sqrt((x - r4(1))^2 + (y - r4(2))^2 + (z - r4(3))^2) - c*(r4(4) - d);
+%Diffrum föllin og setjum niðurstöðurnar í fylkið Df
+for i = 1:4
+    for j = 1:4
+        Df{i,j} = diff(f{i}, vars(j));
+    end
+end
+%Breytum föllunum í fallshandföng
+for i = 1:4
+    f{i} = matlabFunction(f{i}, 'Vars', [x,y,z,d]);
+    for j = 1:4
+        Df{i,j} = matlabFunction(Df{i,j}, 'Vars', [x,y,z,d]);
+    end
+end
+%Framkvæmum reikninga
+for k = 1:n
+    for i = 1:4
+        h = f{i};
+        f1(i) = h(r0(1), r0(2), r0(3), r0(4));
+        for j = 1:4
+            g = Df{i,j};
+            Df1(i,j) = g(r0(1), r0(2), r0(3), r0(4));
+        end
+    end
+    r0 = r0 - Df1\f1;
+end
+%Skilum niðurstöðum
+r = [r0(1), r0(2), r0(3)];
+d = r0(4);
+end
+\end{minted}
+
+\subsection*{forrit2}
+
+\begin{minted}[breaklines]{matlab}
+function [r, d] = tolvu2_3(r1, r2, r3, r4)
+%Fallið reiknar út staðsetingu móttakara út frá upplýsingum frá
+%gervitunglum. Það tekur inn 4 vigra sem innihalda x, y og z hnit fjögurra
+%gervitungla ásamt sendingartímum.
+
+%Skilgreinum breytur
+syms x y z d
+c = 299792.458;  %ljóshraði
+%Skilgreinum föllin okkar
+f = sqrt((x - r1(1))^2 + (y - r1(2))^2 + (z - r1(3))^2) - c*(r1(4) - d);
+g = sqrt((x - r2(1))^2 + (y - r2(2))^2 + (z - r2(3))^2) - c*(r2(4) - d);
+h = sqrt((x - r3(1))^2 + (y - r3(2))^2 + (z - r3(3))^2) - c*(r3(4) - d);
+j = sqrt((x - r4(1))^2 + (y - r4(2))^2 + (z - r4(3))^2) - c*(r4(4) - d);
+
+%Leysum með solve skipuninni
+S = solve(f,g,h,j,x,y,z,d);
+
+%Skilum niðurstöðum
+r  = [double(S.x), double(S.y), double(S.z)];
+d = double(S.d);
+end
+\end{minted}
+
+\subsection*{forrit3}
+
+\begin{minted}[breaklines]{matlab}
+function [r0, d] = tolvu2_61(init,s,n)
+%Fallið reiknar út staðsetningu móttakara með Gauss-Newton aðferð.
+%init: Vigur sem inniheldur upphafsgisk fyrir x, y, z og d.
+%s:    Staðsetningarfylki, dálkar innihalda x, y og z hnit gervitungla ásamt
+%      mældum tíma t. Línur eru gervitungl.
+%n:    Heiltala sem tilgreinir fjölda ítrana.
+
+%Skilgreinum symbólískar breytur
+syms x y z d 
+%Skilgreinum fasta og upphafsstillum fylki
+c = 299792.458;  %ljóshraði
+r = cell(8,1);   %Fylki fyrir formúlur
+Dr = cell(8,4);  %Fylki fyrir diffraðar formúlur
+A = zeros(8,4);  %Fylki fyrir útreikninga
+B = zeros(8,1);  %Fylki fyrir útreikninga
+vars = [x,y,z,d];%Fylki af breytum
+%Röðum jöfnunum inn í fylkið r
+r{1} = sqrt((x - s(1,1))^2 + (y - s(1,2))^2 + (z - s(1,3))^2) - c*(s(1,4) - d);
+r{2} = sqrt((x - s(2,1))^2 + (y - s(2,2))^2 + (z - s(2,3))^2) - c*(s(2,4) - d);
+r{3} = sqrt((x - s(3,1))^2 + (y - s(3,2))^2 + (z - s(3,3))^2) - c*(s(3,4) - d);
+r{4} = sqrt((x - s(4,1))^2 + (y - s(4,2))^2 + (z - s(4,3))^2) - c*(s(4,4) - d);
+r{5} = sqrt((x - s(5,1))^2 + (y - s(5,2))^2 + (z - s(5,3))^2) - c*(s(5,4) - d);
+r{6} = sqrt((x - s(6,1))^2 + (y - s(6,2))^2 + (z - s(6,3))^2) - c*(s(6,4) - d);
+r{7} = sqrt((x - s(7,1))^2 + (y - s(7,2))^2 + (z - s(7,3))^2) - c*(s(7,4) - d);
+r{8} = sqrt((x - s(8,1))^2 + (y - s(8,2))^2 + (z - s(8,3))^2) - c*(s(8,4) - d);
+%Diffrum jöfnurnar í r m.t.t. veiðeigandi breyta og röðum í fylkið Dr.
+for i = 1:8
+    for j = 1:4
+        Dr{i,j} = diff(r{i}, vars(j));
+    end
+end
+%Breytum symbólísku stæðunum í fallshandföng
+for i = 1:8
+    r{i} = matlabFunction(r{i}, 'Vars', [x,y,z,d]);
+    for j = 1:4
+        Dr{i,j} = matlabFunction(Dr{i,j}, 'Vars', [x,y,z,d]);
+    end
+end
+%Framkvæmum reikningana n sinnum
+for k = 1:n
+    for i = 1:8
+        tempr = r{i};
+        B(i) = tempr(init(1),init(2),init(3),init(4));
+        for j = 1:4
+            tempd = Dr{i,j};
+            A(i,j) = tempd(init(1),init(2),init(3),init(4));
+        end
+    end
+    v = (-A'*B)\(A'*A);
+    init = init + v;
+end
+%Skilum niðurstöðum
+r0 = init(1:3);
+d = init(4);
+end
+\end{minted}
+
+\begin{center}
+  \newpage
+  \mbox{}
+  \vfill
+  \begin{tabular}[b]{c c c}
+  & & \\[8ex]
+  \makebox[2in]{\hrulefill} & \makebox[2in]{\hrulefill} & \makebox[2in]{\hrulefill}\\[6ex]
+  Þorsteinn Jón & Emil Gauti & Garðar Árni\\
+  \end{tabular}
+\end{center}
+\end{document}
+
+
+
+
+
+
+
+
+
+
+\end{document}

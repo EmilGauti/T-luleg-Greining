@@ -1,0 +1,103 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb, amsthm, marvosym, permute, extsizes}
+\usepackage{siunitx, graphicx, float, enumitem, adjustbox, hyperref, bm}
+\usepackage{microtype, dsfont}
+\usepackage[normalem]{ulem}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage[icelandic]{babel}
+\newcommand{\explain}[2]{\underbrace{#1}_\textrm{$#2$}}
+
+\usepackage{minted}
+
+\title{Heimadæmi 8\\ \vspace{0.4cm} \large Töluleg Greining}
+\author{Emil Gauti Friðriksson}
+\begin{document}
+\maketitle
+\section*{dæmi 3 í Computer Problems 4.3}
+implement Householder reflections in:\\
+Write a Matlab program that implements classical Gram–Schmidt to find the reduced QR
+factorization. Check your work by comparing factorizations of the matrices in Exercise 1 with
+the Matlab qr(A,0) command or equivalent. The factorization is unique up to signs of the
+entries of Q and R.
+\subsection*{Svar}
+
+\begin{minted}{matlab}
+function [Q,R] = verkefni81(A) 
+[m,n] = size(A);
+R = A;
+Q = eye(m);
+H = cell(1,m-1);
+H{1} = eye(m);
+
+    for i = 1:m-1
+        I = eye(m);
+        x0 = H{i}*A;
+        x = x0(i:m,i);
+        w = [norm(x); zeros(m-i,1)];
+        v = w - x;
+        p = v*v'/(v'*v);
+        h = eye(m-(i-1)) - 2*p;
+        I(i:m,i:m) = h;
+        H{i+1} = I;
+    end
+    
+    for i = 1:m-1
+       R = H{i+1}*R;
+    end
+    
+    for i = m-1:-1:1
+       Q = H{i+1}*Q;
+    end
+    A
+
+end
+\end{minted}
+ef notað á fylkin úr exercise 1 úr kaflanum
+fæst eftirfarandi:
+\begin{minted}{console}
+verkefni81(A)
+A =
+
+     4     0
+     3     1
+ans =
+    0.8000    0.6000
+    0.6000   -0.8000
+    
+    
+verkefni81(B)
+A =
+     1     2
+     1     1
+ans =
+    0.7071    0.7071
+    0.7071   -0.7071
+
+verkefni81(C)
+A =
+     2     1
+     1    -1
+     2     1
+ans =
+    0.6667    0.2357    0.7071
+    0.3333   -0.9428    0.0000
+    0.6667    0.2357   -0.7071
+    
+verkefni81(D)
+A =
+     4     8     1
+     0     2    -2
+     3     6     7
+ans =
+    0.8000         0   -0.6000
+         0    1.0000         0
+    0.6000         0    0.8000   
+\end{minted}
+Þetta er allt í samræmi við svörin.
+
+
+\end{document}

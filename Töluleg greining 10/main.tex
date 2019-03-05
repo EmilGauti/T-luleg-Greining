@@ -1,0 +1,133 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb, amsthm, marvosym, permute, extsizes}
+\usepackage{siunitx, graphicx, float, enumitem, adjustbox, hyperref, bm}
+\usepackage{microtype, dsfont}
+\usepackage[normalem]{ulem}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage[icelandic]{babel}
+\usepackage{tikz}
+\newcommand{\explain}[2]{\underbrace{#1}_\textrm{$#2$}}
+
+\usepackage{minted}
+
+\title{\vspace{-2ex}Heimadæmi 10\\ \vspace{0.2cm} \large Töluleg Greining\vspace{-2ex}}
+\author{Emil Gauti Friðriksson}
+\begin{document}
+\maketitle
+\section*{Dæmi 1}
+\textbf{(a)} Apply Romberg Integration to find $R_{33}$ for the integral
+$$\int_0^1 xe^x dx $$.\\
+\noindent \textbf{(b)} Show that the extrapolation of the composite Trapezoid Rules in $R_{11}$ and $R_{21}$ yields the composite Simpson's Rule(with step size $h_2$) in $R_{22}$
+
+\subsection*{Svar}
+\textbf{(a)} Byrjum á að athuga að $f(a) = f(0) = 0$ og $f(b) = f(1) = e$ og að $h_i = \frac{1}{2^{i-1}}(b-a)$. Við vitum síðan að
+$$R_{11} = \frac{h_1}{2}(f(a)+f(b)) = \frac e2$$
+nú þurfum við að finna eftirfarandi gildi á $R$: $R_{21}, R_{22}, R_{31}, R_{32}$ og loks getum við fundið $R_{33}$. Hefjumst handa:
+
+\begin{align*}
+R_{j1} &= \frac 12 R_{j-1,1} + h_j\sum_{i=1}^{2^{j-2}} f(a+(2i-1)h_j).\\
+R_{22} &= \frac{2^2R_{21}-R_{11}}{3}\\
+R_{32} &= \frac{2^2R_{31}-R_{21}}{3}\\
+R_{21} &= \frac{h_2}{2}(f(a)+f(b)+2f\left(\frac{a+b}{2}\right))\\
+R_{31} &= \frac 12 R_{21}+h_3\sum_{i=1}^2f(a+(2i-1)h_3)
+\end{align*}
+
+Fyllum nú í jöfnurnar:
+
+\begin{align*}
+R_{21} 	&= \frac 14 (0+e+2(\frac 12 e^{1/2}))\\
+		&= \frac 14 (e+\sqrt[]{e})\\
+R_{31}	&= \frac 18 (e+\sqrt[]{e})+ \frac 14 \left[(\frac 14 e^{1/4}) + (\frac 34 e^{3/4}\right]\\
+		&= \frac 18 (e+\sqrt[]{e}) + \frac{1}{16}(e^{1/4}+3e^{3/4})\\
+R_{22}	&= \frac{4(\frac 14 (e+\sqrt[]{e}))-\frac 12 e}{3}\\
+		&= \frac{1}{6}(e+2\sqrt[]{e})\\
+R_{32}	&= \frac{4(\frac 18 (e+\sqrt[]{e}) + \frac{1}{16}(e^{1/4}+3e^{3/4})-\frac 14 (e+\sqrt[]{e})}{3}\\
+		&=\frac{1}{12}(e+\sqrt[]{e}+e^{1/4}+3e^{3/4})\\
+R_{33}	&= \frac{16(\frac{1}{12} (e+\sqrt[]{e} + e^{1/4} + 3e^{3/4})) - \frac 16 (e+2\sqrt[]{e})}{15}\\
+		&= \frac{7e + 6\,\sqrt[]{e} + 8e^{1/4}+24e^{3/4}}{90}\\
+        &\approx 1.0000056
+\end{align*}
+
+
+\textbf{(b)} Athugum nú trapizuregluna:
+\begin{align*}
+\int_a^b f(x)dx \approx \frac{h}{2} [f(x_0)+2f(x_1) + 2f(x_2)+\cdots+2f(x_{n-1})+f(x_n) ]
+\end{align*}
+Þar sem $h=(b-a)/n$, látum nú $n$ vera slétta tölu og skrifum upp trapizuregluna fyrir $h=2h$:
+\begin{align*}
+\int_a^b f(x)dx \approx \frac{h}{4} [f(x_0)+2f(x_2) + 2f(x_4)+\cdots+2f(x_{n-2})+f(x_n) ]
+\end{align*}
+
+Summan inniheldur aðeins $x_{2k}$. Því verður villan fjórföld í seinni jöfnunni. Drögum nú fjórðung af seinni jöfnunni frá fyrri:
+
+\begin{align*}
+&\frac{h}{8} [2f(x_0)+4f(x_1) + 4f(x_2)+\cdots+4f(x_{n-1})+2f(x_n) ] - [f(x_0)+2f(x_2) + 2f(x_4)+\cdots+2f(x_{n-2})+f(x_n) ]\\
+&=\frac{h}{8} [f(x_0) + 4f(x_1)+2f(x_2)+4f(x_3)+\cdots+2f(x_{n-2})+4f(x_{n-1})+f(x_n)]\\
+&=\frac h8 \left[f(x_0) + f(x_n) + 4\sum_{i=0}^{n/2-1}f(x_{2i+1}) + 2\sum_{i=0}^{n/2-1}f(x_{2i}) \right]\\
+&= \frac 34 \int_a^bf(x)dx
+\end{align*}
+og ef við margföldum nú með $4/3$ fáum við Simpsons regluna:
+\begin{align*}
+\int_a^b f(x) dx = \frac h6 \left[f(x_0)+f(x_n)  4\sum_{i=0}^{n/2-1}f(x_{2i+1}) + 2\sum_{i=0}^{n/2-1}f(x_{2i})	\right]
+\end{align*}
+
+
+
+
+\section*{Dæmi 2}
+Approximate the integrals, using n = 4 Gaussian Quadrature.
+$$\int_1^4\ln x dx $$
+
+\subsection*{Svar}
+Notum jöfnu 5.46 úr bók og fáum:
+\begin{align*}
+\int_1^4\ln x dx 	&= \frac{4-1}{2}\int_{-1}^1\ln(\frac{(4-1)t+1+4}{2})dt\\
+					&=\frac 32 \int_{-1}^1\ln (\frac{3t+5}{2}) dt 
+\end{align*}
+Nú er $x_i$ lausnir $p_4(x)$ úr bók:
+\begin{align*}
+x_1 &= -\, \sqrt[]{\frac{15+2\,\sqrt[]{30}}{35}}\\
+x_2 &= -\, \sqrt[]{\frac{15-2\,\sqrt[]{30}}{35}}\\
+x_3 &=\, \sqrt[]{\frac{15-2\,\sqrt[]{30}}{35}}\\
+x_4 &= \, \sqrt[]{\frac{15+2\,\sqrt[]{30}}{35}}\\
+\end{align*}
+Við fáum einnig $c_i$ úr bók:
+\begin{align*}
+c_1 &=\frac{90-5\, \sqrt[]{30}}{180}\\
+c_2 &=\frac{90+5\, \sqrt[]{30}}{180}\\
+c_3 &=\frac{90+5\, \sqrt[]{30}}{180}\\
+c_4 &=\frac{90-5\, \sqrt[]{30}}{180}\\
+\end{align*}
+
+Svo beitum við Gaussian Quadrature aðferðinni $\int_{-1}^1 f(x) dx = \sum_{i=1}^n c_i f(x_i) $
+
+\begin{align*}
+\int_1^4 \ln x dx 	&= \frac 32 \int_{-1}^1 \ln (\frac{3t+5}{2})dt\\
+					&=0.09872679636+0.67315948323+1.07792808398+0.69543956996\\
+                    &= 2.54525393353
+\end{align*}
+sem er nokkuð nálægt rétta svarinu sem er $2.5451774445$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

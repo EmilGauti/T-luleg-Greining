@@ -1,0 +1,180 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb, amsthm, marvosym, permute, extsizes}
+\usepackage{siunitx, graphicx, float, enumitem, adjustbox, hyperref, bm}
+\usepackage{microtype, dsfont}
+\usepackage[normalem]{ulem}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage[icelandic]{babel}
+
+\usepackage{minted}
+
+\title{Heimadæmi 2\\ \vspace{0.4cm} \large Töluleg Greining}
+\author{Emil Gauti Friðriksson}
+\begin{document}
+\maketitle
+\section*{Dæmi 1}
+\subsection*{1.1 Computer Problems, dæmi 7}
+Use the Bisection Method to find the two real numbers $x$, within six correct decimal places,
+that make the determinant of the matrix
+$$A =
+\begin{bmatrix}
+1 & 2  & 3  & x\\
+4 & 5  & x  & 6\\
+7 & x  & 8  & 9\\
+x & 10 & 11 & 12
+\end{bmatrix}
+$$
+equal to 1000. For each solution you find, test it by computing the corresponding determinant
+and reporting how many correct decimal places (after the decimal point) the determinant has
+when your solution x is used. You may use the Matlab command det to compute the
+determinants.
+\section*{Svar}
+Notast er við \mintinline{matlab}|bisect.m| forritið úr bókinni, fundin voru tvö bil sem innuhéldu eina rót fyrir sig, aðferðin við að finna þessi bil var fremur frumstæð en notast var við ágiskun.
+\begin{minted}{matlab}
+format long
+syms x;
+A = [1, 2, 3, x; 4, 5, x, 6; 7, x, 8, 9; x, 10, 11, 12 ];
+f(x) = det(A)-1000;
+a = [-20, 0]; 
+b = [0, 20]; 
+for i=1:2
+    bisect(f,a(i),b(i),0.000000005)
+end
+\end{minted}
+fyrra bilið er [-20,0] og það seinna er [0,20], Þetta skilar eftirfarandi:
+\begin{minted}{matlab}
+ans = -17.188498149625957
+
+ans =   9.708299119956791
+\end{minted}
+Þar sem \mintinline{matlab}|TOL = 0.000000005| þá getum við verið sannfærð um að svarið er a.m.k. nákvæmt upp að sex aukastöfum þ.e. $x_1 = -17.188498$ og $x_2 = 9.708299$
+
+\noindent Látum nú $x=x_1$ og reiknum $\det(A(x_1))-1000 = -0.00180775$\\
+Látum nú $x=x_2$ og reiknum $\det(A(x_2))-1000 = -1.40747 \cdot 10^{-4}$\\
+Sjáum að raunverulegar rætur fallsins eru því ekki fjarri.
+
+\section*{Dæmi 2}
+\subsection*{1.2 Exercises, dæmi 14}
+Which of the following three Fixed-Point Iterations converge to $\sqrt[]{2}$? Rank the ones that converge from fastest to slowest.\\
+$$(A)\quad x\rightarrow \frac 12 x+\frac 1x \qquad (B)\quad x\rightarrow \frac 23 x+\frac{2}{3x} \qquad (C)\quad x\rightarrow \frac 34 x + \frac{1}{2x} $$
+\subsection*{Svar}
+Athugum hvert tilfelli með fallinu \mintinline{matlab}|fpi.m| sem gefið er í bókinni. Tökum 12 ítranir. skráum niður gildin og berum þau saman. Við drögum $\sqrt[]{2}$ frá því við höfum bara áhuga á hvort/hve hratt föllin nálgist $\sqrt[]{2}$.
+\begin{minted}{matlab}
+a=@(x) (1/2)*x+(1/x);
+b=@(x) (2/3)*x+2/(3*x);
+c=@(x) (3/4)*x+1/(2*x);
+
+for i=1:12
+   gildi_a(i) = fpi(a,1,i)-sqrt(2);
+   gildi_b(i) = fpi(b,1,i)-sqrt(2);
+   gildi_c(i) = fpi(c,1,i)-sqrt(2);
+end
+\end{minted}
+Setjum gögnin fram í töflu, námundum upp að sjötta aukastaf:
+\begin{table}[h]
+\centering
+\begin{tabular}{ l l l l}
+\hline
+i 		& $\quad(A)$ & $\quad(B)$ & $\quad(C)$\\
+\hline
+1  	& 0.085786 	& -0.080880 & -0.164214\\
+2 	& 0.002453	& -0.025324 & -0.076714\\
+3	& 0.000002 	& -0.008287 & -0.037257\\
+4	& 0.000000	& -0.002746 & -0.018376\\
+5	& 0.000000	& -0.000914 & -0.009128\\
+6	& 0.000000	& -0.000304 & -0.004549\\
+7	& 0.000000	& -0.000101 & -0.002271\\
+8	& 0.000000	& -0.000034 & -0.001135\\
+9	& 0.000000	& -0.000011 & -0.000567\\
+10	& 0.000000	& -0.000004 & -0.000283\\
+11	& 0.000000	& -0.000001 & -0.000142\\
+12	& 0.000000	& 0.000000 & -0.000071\\
+\hline
+\end{tabular}
+\end{table}\\
+Nú sjáum við að jafna (A) er hröðust að nálgast $\sqrt[]{2}$, þar á eftir kemur (B) og loks (C), öll tilfellin nálgast $\sqrt[]{2}$.
+
+\newpage
+\section*{Dæmi 3}
+\subsection*{1.5 Exercises}
+
+\subsection*{Dæmi 1.5.1}
+
+Apply two steps of the Secant Method to $e^x + \sin x = 4$ with initial guesses $x_0=1$ and $x_1=2.$
+\subsection*{Svar}
+
+
+\begin{align*}
+x_{i+1} = x_i - \frac{f(x_i)(x_i-x_{i-1})}{f(x_i)-f(x_{i-1})}
+\end{align*}
+svo við fáum eftirfarandi:
+\begin{align*}
+x_2 &= x_1 - \frac{f(x_1)(x_1-x_0)}{f(x_1)-f(x_0)}\\
+	&= 2 - \frac{(e^2+\sin(2)-4)(2-1)}{(e^2+\sin(2)-4)-(e^1+\sin(1)-4)}\\
+    &\approx 1.0929
+\end{align*}
+Höldum áfram og reiknum $x_3$
+\begin{align*}
+x_3 &= 1.0929 - \frac{(e^{1.0929}+\sin(1.0929)-4)(1.0929-2)}{(e^{1.0929}+\sin(1.0929)-4)-(e^2+\sin(2)-4)}\\
+	&\approx \underline{1.1194}
+\end{align*}
+
+
+
+
+\subsection*{Dæmi 1.5.2}
+Apply two steps of the Method of False Position with initial bracket [1, 2] to the equations of
+Exercise 1.
+\subsection*{Svar}
+skrifum $f(x) = e^x + \sin x -4$
+\begin{align*}
+x_2 &= \frac{x_1f(x_0)-x_0f(x_1)}{f(x_0)-f(x_1)}\\
+	&= \frac{2(e+\sin(1)-4)-1(e^2+\sin(2)-4)}{(e+\sin(1)-4)-(e^2+\sin(2)-4)}\\
+    &\approx 1.0929
+\end{align*}
+athugum síðan að $f(x_2)\cdot f(x_1) < 0$ því er rótin á bilinu $[x_1, x_2]$. Beitum því sömu útreikningum til að finna $x_3$.
+\begin{align*}
+x_3 &= \frac{x_1f(x_2)-x_2f(x_1)}{f(x_2)-f(x_1)}\\
+	&= \frac{2(e^{1.0929}+\sin(1.0929)-4)-1.0929(e^2+\sin(2)-4)}{(e^{1.0929}+\sin(1.0929)-4)-(e^2+\sin(2)-4)}\\
+	&\approx \underline{1.1194}
+\end{align*}
+
+\newpage
+\subsection*{Dæmi 1.5.3}
+Apply two steps of Inverse Quadratic Interpolation to the equations of Exercise 1. Use initial
+guesses $x_0 = 1$, $x_1=2$, and $x_2 = 0$, and update by retaining the three most recent iterates.
+\subsection*{Svar}
+látum $a = x_0$, $b=x_1$ og $c=x_2$\\
+Þá höfum við eftirfarandi: \\
+$f(a) = A = e+\sin(1)-4$, $f(b) = B = e^2 +\sin(2) -4$ og $f(c) = C = -3$\\
+skilgreinum síðan eftirfarandi:
+$q=f(a)/f(b) \approx -0.1024$, $r=f(c)/f(b)\approx -0.6979$ og $s=f(c)/f(a)\approx -25.9752$\\
+Inverse Quadratic Interpolation gefur síðan:
+\begin{align*}
+x_{i+3} = x_{i+2}- \frac{r(r-q)(x_{i+2}-x_{i+1})+(1-r)s(x_{i+2}-x_i)}{(q-1)(r-1)(s-1)}
+\end{align*}
+og því höfum við að $x_3$ er eftirfarandi:
+\begin{align*}
+x_3 &= 0 - \frac{-0.6979(-0.6979 - (-0.1024))(0-1) + (1-(-0.1024))(-25.9752)(0-1)}{(-0.1024-1) (-0.6979-1) (-25.9752-1)} \\
+	&\approx 0.5589
+\end{align*}
+nú er $a=2$, $b=0$ og $c=0.5589$\\
+$q = f(a)/f(b) = -1.4328$, $r=f(c)/f(b)\approx 0.5737$ og $s=f(c)/f(a)\approx -0.4004$\\
+Nú getum við því fundið $x_4$:
+\begin{align*}
+x_4 &= 0.5589 - \frac{0.5737(0.5737-(-1.4328))(0.5589-0)+(1-0.5737)(-0.4004)(0.5589-2)}{(-1.4328-1) (0.5737-1) (-0.4004-1)}\\
+	&\approx \underline{1.1712} 
+\end{align*}
+
+
+
+
+
+
+
+
+\end{document}
